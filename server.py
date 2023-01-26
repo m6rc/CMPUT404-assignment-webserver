@@ -1,5 +1,6 @@
 #  coding: utf-8 
 import socketserver
+import urllib.request
 
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
 # 
@@ -29,9 +30,17 @@ import socketserver
 
 class MyWebServer(socketserver.BaseRequestHandler):
     
-    def handle(self):
+    def handle(self): # GET
         self.data = self.request.recv(1024).strip()
         print ("Got a request of: %s\n" % self.data)
+        path = ((str(self.data)).split())[1]
+        if path == "/":
+            response = ("HTTP/1.1 200 OK\r\n" +
+            "Connection: close\r\n"+
+            "Content-Encoding: gzip\r\n"+
+            "Content-Type: text/html; charset=utf-8\r\n"+
+            "Transfer-Encoding: gzip\r\n"
+            +"\r\n")
         self.request.sendall(bytearray("OK",'utf-8'))
 
 if __name__ == "__main__":
