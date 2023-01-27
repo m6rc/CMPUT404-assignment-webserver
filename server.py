@@ -58,27 +58,28 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 extension = path.split(".")[-1]
                 if extension == "css":
                     response = b'HTTP/1.1 200 OK\r\n'
-                    b'Connection: keep-alive\r\n'
-                    b'Content-Encoding: gzip\r\n'
-                    b'Content-Type: text/css; charset=utf-8\r\n'
-                    b'Transfer-Encoding: gzip\r\n'
-                    b'\r\n'
+                    # response += b'Content-Encoding: gzip\r\n'
+                    response += b'Content-Type: text/css; charset=utf-8\r\n'
+                    # response += b'Transfer-Encoding: gzip\r\n'
+                    # response += b'Connection: close\r\n'
+                    response += b'\r\n'
                 elif extension == "html":
                     response = b'HTTP/1.1 200 OK\r\n'
-                    b'Connection: close\r\n'
-                    b'Content-Encoding: gzip\r\n'
-                    b'Content-Type: text/html; charset=utf-8\r\n'
-                    b'Transfer-Encoding: gzip\r\n'
-                    b'\r\n'
+                    # response += b'Content-Encoding: gzip\r\n'
+                    response += b'Content-Type: text/html; charset=utf-8\r\n'
+                    # response += b'Transfer-Encoding: gzip\r\n'
+                    # response += b'Connection: close\r\n'
+                    response += b'\r\n'
                 else:
                     response = b'HTTP/1.1 200 OK\r\n'
                     b'Connection: close\r\n'
                     b'Content-Encoding: gzip\r\n'
                     b'Content-Type: application/octet-stream; charset=utf-8\r\n'
-                    b'Transfer-Encoding: gzip\r\n'
+                    b'Transfer-Encoding: gzip\r\n\r\n\r\n'
                     b'\r\n'
                 with open("www"+path, 'rb') as f:
                     response += f.read()
+                    print(response)
         self.request.sendall(response)
 
 if __name__ == "__main__":
@@ -91,7 +92,6 @@ if __name__ == "__main__":
             paths.append(os.path.join(root, file)) # all paths in www directory
     for i in range(len(paths)): # remove www from all paths
         paths[i] = paths[i][3:]
-    print(paths)
 
     # create a list of all directories in www directory
     for root, dirs, files in os.walk("www"):
@@ -99,7 +99,6 @@ if __name__ == "__main__":
             directories.append(os.path.join(root, dir))
     for i in range(len(directories)): # remove www from all paths
         directories[i] = directories[i][3:]
-    print(directories)
 
 
     socketserver.TCPServer.allow_reuse_address = True
