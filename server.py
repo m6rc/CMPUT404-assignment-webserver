@@ -1,9 +1,8 @@
 #  coding: utf-8 
 import socketserver
-import urllib.request
 import os
 
-# Copyright 2013 Abram Hindle, Eddie Antonio Santos
+# Copyright 2023 Abram Hindle, Eddie Antonio Santos, Marc-Andre Haley
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -69,13 +68,13 @@ class MyWebServer(socketserver.BaseRequestHandler):
                     response += b'\r\n'
                 else:
                     response = b'HTTP/1.1 200 OK\r\n'
-                    response += b'Content-Encoding: gzip\r\n'
+                    # response += b'Content-Encoding: gzip\r\n'
                     response += b'Content-Type: application/octet-stream; charset=utf-8\r\n'
                     # response += b'Transfer-Encoding: gzip\r\n'
                     response += b'\r\n'
                 with open("www"+path, 'rb') as f:
                     response += f.read()
-        print(response)
+        # print(response)
         self.request.sendall(response)
 
 if __name__ == "__main__":
