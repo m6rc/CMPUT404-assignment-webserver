@@ -53,7 +53,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 else:  # if path is directory respond with 301 and redirect
                     response = b'HTTP/1.1 301 Moved Permanently\r\n'
                     b'Connection: close\r\n'
-                    b'Location: http://' + path + '/\r\n'
+                    b'Location: http://' + bytes(path, 'utf-8') + '/\r\n'
             else:  # if path in www
                 extension = path.split(".")[-1]
                 if extension == "css":
