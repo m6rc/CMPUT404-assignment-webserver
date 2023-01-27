@@ -28,10 +28,25 @@ import os
 
 # try: curl -v -X GET http://127.0.0.1:8080/
 
-paths = []
-directories = []
 
 class MyWebServer(socketserver.BaseRequestHandler):
+
+    def setup(self):
+        self.paths = []
+        self.directories = []
+        # create a list of all paths in www directory
+        for root, dirs, files in os.walk("www"):
+            for file in files:
+                self.paths.append(os.path.join(root, file)) # all paths in www directory
+        for i in range(len(self.paths)): # remove www from all paths
+            self.paths[i] = self.paths[i][3:]
+
+        # create a list of all directories in www directory
+        for root, dirs, files in os.walk("www"):
+            for dir in dirs:
+                self.directories.append(os.path.join(root, dir))
+        for i in range(len(self.directories)): # remove www from all paths
+            self.directories[i] = self.directories[i][3:]
     
     def handle(self): # GET
         self.data = self.request.recv(1024).strip()
@@ -46,8 +61,8 @@ class MyWebServer(socketserver.BaseRequestHandler):
             # if path ends with /, change to /index.html
             if path[-1] == "/":
                 path += "index.html"
-            if path not in paths: 
-                if path not in directories:  # if path not in www respond with 404
+            if path not in self.paths: 
+                if path not in self.directories:  # if path not in www respond with 404
                     response = b'HTTP/1.1 404 Not Found\r\n'
                     b'Connection: close\r\n'
                 else:  # if path is directory respond with 301 and redirect
@@ -72,10 +87,10 @@ class MyWebServer(socketserver.BaseRequestHandler):
                     response += b'\r\n'
                 else:
                     response = b'HTTP/1.1 200 OK\r\n'
-                    b'Connection: close\r\n'
                     b'Content-Encoding: gzip\r\n'
                     b'Content-Type: application/octet-stream; charset=utf-8\r\n'
                     b'Transfer-Encoding: gzip\r\n\r\n\r\n'
+                    b'Connection: close\r\n'
                     b'\r\n'
                 with open("www"+path, 'rb') as f:
                     response += f.read()
@@ -84,22 +99,6 @@ class MyWebServer(socketserver.BaseRequestHandler):
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
-
-
-    # create a list of all paths in www directory
-    for root, dirs, files in os.walk("www"):
-        for file in files:
-            paths.append(os.path.join(root, file)) # all paths in www directory
-    for i in range(len(paths)): # remove www from all paths
-        paths[i] = paths[i][3:]
-
-    # create a list of all directories in www directory
-    for root, dirs, files in os.walk("www"):
-        for dir in dirs:
-            directories.append(os.path.join(root, dir))
-    for i in range(len(directories)): # remove www from all paths
-        directories[i] = directories[i][3:]
-
 
     socketserver.TCPServer.allow_reuse_address = True
     # Create the server, binding to localhost on port 8080
