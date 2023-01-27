@@ -1,9 +1,8 @@
 #  coding: utf-8 
 import socketserver
-import urllib.request
 import os
 
-# Copyright 2013 Abram Hindle, Eddie Antonio Santos
+# Copyright 2023 Abram Hindle, Eddie Antonio Santos, Marc-Andre Haley
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -67,34 +66,30 @@ class MyWebServer(socketserver.BaseRequestHandler):
                     b'Connection: close\r\n'
                 else:  # if path is directory respond with 301 and redirect
                     response = b'HTTP/1.1 301 Moved Permanently\r\n'
-                    response += b'Location: http://localhost:8080' + bytes(path, 'utf-8') + b'/\r\n'
-                    response += b'Connection: close\r\n'
+                    response += b'Location: http://127.0.0.1:8080' + bytes(path, 'utf-8') + b'/\r\n'
             else:  # if path in www
                 extension = path.split(".")[-1]
                 if extension == "css":
                     response = b'HTTP/1.1 200 OK\r\n'
-                    # response += b'Content-Encoding: gzip\r\n'
+                    #response += b'Content-Encoding: gzip\r\n'
                     response += b'Content-Type: text/css; charset=utf-8\r\n'
                     # response += b'Transfer-Encoding: gzip\r\n'
-                    # response += b'Connection: close\r\n'
                     response += b'\r\n'
                 elif extension == "html":
                     response = b'HTTP/1.1 200 OK\r\n'
-                    # response += b'Content-Encoding: gzip\r\n'
+                    #response += b'Content-Encoding: gzip\r\n'
                     response += b'Content-Type: text/html; charset=utf-8\r\n'
                     # response += b'Transfer-Encoding: gzip\r\n'
-                    # response += b'Connection: close\r\n'
                     response += b'\r\n'
                 else:
                     response = b'HTTP/1.1 200 OK\r\n'
-                    b'Content-Encoding: gzip\r\n'
-                    b'Content-Type: application/octet-stream; charset=utf-8\r\n'
-                    b'Transfer-Encoding: gzip\r\n\r\n\r\n'
-                    b'Connection: close\r\n'
-                    b'\r\n'
+                    # response += b'Content-Encoding: gzip\r\n'
+                    response += b'Content-Type: application/octet-stream; charset=utf-8\r\n'
+                    # response += b'Transfer-Encoding: gzip\r\n'
+                    response += b'\r\n'
                 with open("www"+path, 'rb') as f:
                     response += f.read()
-        print(response)
+        # print(response)
         self.request.sendall(response)
 
 if __name__ == "__main__":
