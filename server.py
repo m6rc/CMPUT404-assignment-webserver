@@ -52,8 +52,8 @@ class MyWebServer(socketserver.BaseRequestHandler):
                     b'Connection: close\r\n'
                 else:  # if path is directory respond with 301 and redirect
                     response = b'HTTP/1.1 301 Moved Permanently\r\n'
-                    b'Connection: close\r\n'
-                    b'Location: http://' + bytes(path, 'utf-8') + '/\r\n'
+                    response += b'Location: http://localhost:8080' + bytes(path, 'utf-8') + b'/\r\n'
+                    response += b'Connection: close\r\n'
             else:  # if path in www
                 extension = path.split(".")[-1]
                 if extension == "css":
@@ -79,7 +79,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                     b'\r\n'
                 with open("www"+path, 'rb') as f:
                     response += f.read()
-                    print(response)
+        print(response)
         self.request.sendall(response)
 
 if __name__ == "__main__":
