@@ -58,7 +58,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 extension = path.split(".")[-1]
                 if extension == "css":
                     response = b'HTTP/1.1 200 OK\r\n'
-                    b'Connection: close\r\n'
+                    b'Connection: keep-alive\r\n'
                     b'Content-Encoding: gzip\r\n'
                     b'Content-Type: text/css; charset=utf-8\r\n'
                     b'Transfer-Encoding: gzip\r\n'
